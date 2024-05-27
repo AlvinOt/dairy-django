@@ -1,0 +1,132 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    position: relative;
+}
+
+.auth-buttons {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+}
+
+.auth-buttons button {
+    background-color: white;
+    border: none;
+    color: #4CAF50;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.auth-buttons button:hover {
+    background-color: #45a049;
+}
+
+main {
+    padding: 20px;
+    padding-bottom: 60px; /* Added padding at the bottom to ensure footer doesn't overlap content */
+}
+
+.description {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+nav ul li {
+    background-color: #ddd;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+nav ul li:hover {
+    background-color: #ccc;
+}
+
+.coming-soon {
+    text-align: center;
+    margin: 20px 0;
+    font-style: italic;
+    color: #888;
+}
+
+.coming-soon ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.coming-soon ul li {
+    margin: 5px 0;
+}
+
+.contact {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.contact form {
+    display: inline-block;
+    text-align: left;
+    max-width: 400px;
+    width: 100%;
+}
+
+.contact label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.contact input, .contact textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.contact button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.contact button:hover {
+    background-color: #45a049;
+}
+
+footer {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    z-index: 1000; /* Ensure the footer stays on top */
+}
