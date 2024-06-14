@@ -26,7 +26,8 @@ class Farm(models.Model):
     location = models.CharField(max_length=100)
     description = models.TextField(max_length=255, blank=True)
     slogan = models.CharField(max_length=255, blank=True, null=True, help_text='Farm motto')
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now)
+    updated = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
             max_length=3,
             choices=Status.choices,
