@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Farm
 
-# Register your models here.
+@admin.register(Farm)
+class FarmAdmin(admin.ModelAdmin):
+    list_display = ['name', 'location', 'status', 'verified']
