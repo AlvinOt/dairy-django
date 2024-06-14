@@ -4,9 +4,17 @@ from django.core.validators import EmailValidator, RegexValidator
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+
 class Status(models.TextChoices):
     INACTIVE = 'INA', 'Inactive'
     ACTIVE = 'ACT', 'Active'
+
+
+class ActivatedManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset()\
+                .filter(status=Status.ACTIVE)
+
 
 class Farm(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -34,6 +42,8 @@ class Farm(models.Model):
             default=Status.INACTIVE
             )
     verified = models.BooleanField(default=False)
+    objects = models.Manager()
+    activated  = ActivatedManager()
 
     class Meta:
         ordering = ['-created']
