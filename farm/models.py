@@ -1,80 +1,40 @@
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
-from django.core.validators import MinValueValidator
-import uuid
+from django.core.exceptions import ValidationError
+from datetime import date  # Import date from datetime module
+from django.utils import timezone
 
-# Custom User Manager
-class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+class FutureDateValidatorMixin:
+    def clean_future_date(self, field_name):
+        date_value = getattr(self, field_name)
+        if date_value and date_value > date.today():
+            raise ValidationError(f"{field_name.capitalize()} cannot be in the future.")
 
-        return self.create_user(email, password, **extra_fields)
 
-# Custom User Model
-class User(AbstractUser):
-    email = models.EmailField(unique=True)
-    roles = models.ManyToManyField('Role', through='UserRole')
-    username = None  # Remove the default username field
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+def get_default_milking_date():
+    return timezone.now().date()
 
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='farm_users',
-        blank=True,
-        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-        verbose_name='groups',
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='farm_users',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions',
-    )
-
-    objects = UserManager()
-
-# Role Model
-class Role(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.name
-
-# UserRole Model
-class UserRole(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    farm = models.ForeignKey('Farm', on_delete=models.CASCADE, null=True, blank=True)
-
-    class Meta:
-        unique_together = ('user', 'role', 'farm')
 
 # Farm Model
 class Farm(models.Model):
+    STATUS_CHOICES = [
+        ('ACT', 'Active'),
+        ('INA', 'Inactive')
+    ]
+
     name = models.CharField(max_length=100, unique=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     location = models.CharField(max_length=100)
     description = models.TextField(max_length=255, blank=True)
     slogan = models.CharField(max_length=255, blank=True, null=True, help_text='Farm motto')
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=3, choices=[('ACT', 'Active'), ('INA', 'Inactive')], default='INA')
-    verified = models.BooleanField(default=False)
-    users = models.ManyToManyField(User, through='UserRole', related_name='farms')
+    status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='INA')
+    verified = models.BooleanField(default=False)  # This represents the verification status
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -84,78 +44,167 @@ class Farm(models.Model):
     def __str__(self):
         return self.name
 
-# Invitation Model
-class Invitation(models.Model):
-    email = models.EmailField()
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, null=True, blank=True)
-    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField()
-    is_accepted = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.email} invited to {self.farm} as {self.role}"
-
-# Approval Request Model
-class ApprovalRequest(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    status = models.CharField(max_length=10, choices=[('PENDING', 'Pending'), ('APPROVED', 'Approved'), ('REJECTED', 'Rejected')], default='PENDING')
-    request_date = models.DateTimeField(auto_now_add=True)
-    decision_date = models.DateTimeField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.user.email} requests {self.role.name} role at {self.farm.name}"
 
 # Cow Model
-class Cow(models.Model):
+class Cow(models.Model, FutureDateValidatorMixin):
+    GENDER_CHOICES = [
+        ('Male', 'Male'),
+        ('Female', 'Female')
+    ]
+
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, blank=True)
     tag_number = models.CharField(max_length=50, unique=True)
-    breed = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
-    weight = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0)])
-    weight_timestamp = models.DateTimeField(auto_now=True)
-    health_status = models.CharField(max_length=100)
-    lactation_status = models.CharField(max_length=100)
-    last_milking_date = models.DateField()
+    breed = models.CharField(max_length=100, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+
+    @property
+    def age(self):
+        if self.date_of_birth:
+            today = date.today()
+            delta = today - self.date_of_birth
+            years = delta.days // 365
+            months = (delta.days % 365) // 30
+            return f"{years} years, {months} months"
+        return None
+
+    def clean(self):
+        super().clean()
+        if not self.tag_number and not self.name:
+            raise ValidationError("Either 'tag_number' or 'name' must be provided.")
+
+        self.clean_future_date('date_of_birth')  # Validate date_of_birth against future date
 
     def __str__(self):
-        return self.name
+        return self.name or self.tag_number
+
+# CowMass Model
+class CowMass(models.Model, FutureDateValidatorMixin):
+    cow = models.ForeignKey(Cow, on_delete=models.CASCADE)  # Changed to ForeignKey
+    mass = models.FloatField(blank=True, null=True)
+    date_measured = models.DateField(blank=True, null=True)
+
+    def clean(self):
+        super().clean()
+        self.clean_future_date('date_measured')  # Validate date_measured against future date
+
+    def __str__(self):
+        return f"{self.cow.name or self.cow.tag_number} - Mass: {self.mass}"
+
 
 # MilkingSession Model
-class MilkingSession(models.Model):
+class MilkingSession(models.Model, FutureDateValidatorMixin):
     cow = models.ForeignKey(Cow, on_delete=models.CASCADE)
-    milking_start_time = models.DateTimeField()
-    milking_end_time = models.DateTimeField()
-    milking_duration = models.DurationField()
     milk_yield = models.DecimalField(max_digits=6, decimal_places=2)
-    milking_equipment_used = models.TextField()
+    milking_date = models.DateField(default=get_default_milking_date)
+
+    def clean(self):
+        super().clean()
+        self.clean_future_date('milking_date')  # Validate milking_date against future date
+
+    def __str__(self):
+        return f"{self.cow.name or self.cow.tag_number} - Milking Session: {self.milking_date}"
+
 
 # HealthRecord Model
-class HealthRecord(models.Model):
+class HealthRecord(models.Model, FutureDateValidatorMixin):
     cow = models.ForeignKey(Cow, on_delete=models.CASCADE)
     health_issue = models.CharField(max_length=100)
     treatment = models.TextField()
     treatment_date = models.DateField()
-    veterinarian = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'roles__name': 'Vet'})
-    notes = models.TextField()
+    notes = models.TextField(blank=True)
+    vet_name = models.CharField(max_length=100, default='Unknown')
+    vet_company = models.CharField(max_length=100, default='Unknown')
+
+    def clean(self):
+        super().clean()
+        self.clean_future_date('treatment_date')  # Validate treatment_date against future date
+
+    def __str__(self):
+        return f"{self.cow.name or self.cow.tag_number} - Health Record: {self.health_issue}"
+
 
 # BreedingRecord Model
 class BreedingRecord(models.Model):
+    BREEDING_METHOD_CHOICES = [
+        ('AI', 'Artificial Insemination'),
+        ('Natural', 'Natural Mating')
+    ]
+
     cow = models.ForeignKey(Cow, on_delete=models.CASCADE)
-    breeding_method = models.CharField(max_length=100, choices=[('AI', 'Artificial Insemination'), ('Natural', 'Natural Mating')])
-    mating_bull = models.CharField(max_length=100)
-    mating_date = models.DateField()
+    breeding_method = models.CharField(max_length=100, choices=BREEDING_METHOD_CHOICES)
+    mating_bull = models.CharField(max_length=100, blank=True)  # Make mating_bull optional
+    bull_name = models.CharField(max_length=100, blank=True)  # Make bull_name optional
+    bull_code = models.CharField(max_length=100, blank=True)  # Make bull_code optional
     expected_calving_date = models.DateField()
-    pregnancy_status = models.CharField(max_length=100)
+    last_calving_date = models.DateField(blank=True, null=True)  # Make last_calving_date optional
+    no_of_calving = models.IntegerField(blank=True, null=True)  # Make no_of_calving optional
+    inseminator_name = models.CharField(max_length=100, blank=True)  # Make inseminator_name optional for AI
+
+    def clean(self):
+        super().clean()
+        if self.breeding_method == 'AI' and not self.inseminator_name:
+            raise ValidationError("Inseminator name is required for Artificial Insemination.")
+
+    def __str__(self):
+        return f"{self.cow.name or self.cow.tag_number} - Breeding Record"
+
 
 # CalvingRecord Model
 class CalvingRecord(models.Model):
     cow = models.ForeignKey(Cow, on_delete=models.CASCADE)
     calving_date = models.DateField()
-    calf_details = models.TextField()
-    birthing_complications = models.TextField(blank=True, null=True)
+    calf_details = models.TextField(help_text="Enter details about the calf.")
+    birthing_details = models.TextField(blank=True, null=True, help_text="Enter details about the birthing process (optional).")
+
+    def __str__(self):
+        return f"{self.cow.name or self.cow.tag_number} - Calving Record"
+
+
+# Inventory Model
+class Inventory(models.Model, FutureDateValidatorMixin):
+    id = models.AutoField(primary_key=True)
+    item_name = models.CharField(max_length=100)
+    quantity = models.PositiveIntegerField()
+    description = models.TextField(blank=True, null=True)
+    date_acquired = models.DateField()
+
+    def clean(self):
+        super().clean()
+        self.clean_future_date('date_acquired')  # Validate date_acquired against future dates
+
+    def __str__(self):
+        return f"{self.item_name} - Quantity: {self.quantity}"
+
+
+# Expense Model
+class Expense(models.Model, FutureDateValidatorMixin):
+    id = models.AutoField(primary_key=True)
+    description = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField()
+    category = models.CharField(max_length=100)
+
+    def clean(self):
+        super().clean()
+        self.clean_future_date('date')  # Validate 'date' against future dates
+
+    def __str__(self):
+        return f"Expense: {self.description} - Amount: {self.amount}"
+
+
+# Revenue Model
+class Revenue(models.Model, FutureDateValidatorMixin):
+    id = models.AutoField(primary_key=True)
+    description = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField()
+    source = models.CharField(max_length=100)
+
+    def clean(self):
+        super().clean()
+        self.clean_future_date('date')  # Validate 'date' against future dates
+
+    def __str__(self):
+        return f"Revenue: {self.description} - Amount: {self.amount}"
