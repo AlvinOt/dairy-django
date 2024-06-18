@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ cow.name_or_tag }}</h1>
+  <p>Breed: {{ cow.breed }}</p>
+  <p>Gender: {{ cow.gender }}</p>
+  <p>Date of Birth: {{ cow.date_of_birth }}</p>
+  <p>Age: {{ cow.age }}</p>
+
+  <!-- Add the link to milking sessions here -->
+  <p><a href="{% url 'milking_sessions' slug=farm.slug cow_id=cow.id %}">View Milking Sessions</a></p>
+
+  <p><a href="{% url 'farm_detail' slug=farm.slug %}">Back to Farm Details</a></p>
+
+
+   {% if last_mass %}
+        <h3>Last Mass Measurement:</h3>
+        <p><strong>Mass:</strong> {{ last_mass.mass }} kg</p>
+        <p><strong>Date Measured:</strong> {{ last_mass.date_measured }}</p>
+    {% endif %}
+{% endblock %}
+

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>All Cows Milk Yield for {{ farm.name }}</h1>
+
+  {% if milking_sessions %}
+    <table>
+      <thead>
+        <tr>
+          <th>Cow</th>
+          <th>Milk Yield (L)</th>
+          <th>Milking Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for session in milking_sessions %}
+          <tr>
+            <td>{{ session.cow.name_or_tag }}</td>
+            <td>{{ session.milk_yield }}</td>
+            <td>{{ session.milking_time }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No milking sessions found for this farm.</p>
+  {% endif %}
+
+{% endblock %}
+

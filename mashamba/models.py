@@ -2,7 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
-from datetime import date  # Import date from datetime module
+
+from datetime import date  #std lib
 
 # Farm Model
 class Farm(models.Model):
@@ -85,10 +86,10 @@ class CowMass(models.Model):
 class MilkingSession(models.Model):
     cow = models.ForeignKey(Cow, on_delete=models.CASCADE, related_name='milking_sessions')
     milk_yield = models.DecimalField(max_digits=6, decimal_places=2)
-    milking_date = models.DateField(default=date.today)
+    milking_time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.cow} - {self.milk_yield} L on {self.milking_date}"
+        return f"{self.cow} - {self.milk_yield} L on {self.milking_time}"
 
 
 # HealthRecord Model

@@ -26,8 +26,8 @@ class CowMassAdmin(admin.ModelAdmin):
 
 @admin.register(MilkingSession)
 class MilkingSessionAdmin(admin.ModelAdmin):
-    list_display = ('cow', 'milk_yield', 'milking_date')
-    list_filter = ('milking_date',)
+    list_display = ('cow', 'milk_yield', 'milking_time')
+    list_filter = ('milking_time',)
     form = MilkingSessionForm  # Associate MilkingSessionForm with MilkingSessionAdmin
 
 @admin.register(HealthRecord)

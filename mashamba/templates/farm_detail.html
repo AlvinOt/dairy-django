@@ -14,7 +14,11 @@
             {% if farm.slogan %}
                 <p><strong>Slogan:</strong> {{ farm.slogan }}</p>
             {% endif %}
-            <p><strong>Description:</strong> {{ farm.description }}</p>
+
+	    <!-- Link to view cows on the farm -->
+	    <p><a href="{% url 'cow_list' slug=farm.slug %}">View Cows</a></p>
+            
+	    <p><strong>Description:</strong> {{ farm.description }}</p>
             <!-- Add more farm details as needed -->
         </section>
     </article>
