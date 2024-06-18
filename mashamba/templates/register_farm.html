@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Register Farm{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Register a New Farm</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Register</button>
+    </form>
+</div>
+<a href="{% url 'dashboard' %}">Go back to Dashboard</a>
+
+{% endblock %}

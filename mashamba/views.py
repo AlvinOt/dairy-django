@@ -1,11 +1,38 @@
 # views.py
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Cow, Farm, MilkingSession
 from collections import defaultdict
 from django.db.models import DateField
 from django.db.models.functions import Cast
+from .forms import FarmForm
+from django.contrib.auth.decorators import login_required
 
 
+def home_view(request):
+    return render(request, 'home.html')
+
+
+@login_required
+def dashboard_view(request):
+    user = request.user
+    farms = Farm.objects.filter(manager=user)
+    return render(request, 'dashboard.html', {'farms': farms})
+
+
+@login_required
+def register_farm_view(request):
+    if request.method == 'POST':
+        form = FarmForm(request.POST)
+        if form.is_valid():
+            farm = form.save(commit=False)
+            farm.manager = request.user
+            farm.save()
+            return redirect('farm_detail', slug=farm.slug)
+    else:
+        form = FarmForm()
+    return render(request, 'register_farm.html', {'form': form})
+
+@login_required
 def farm_detail_view(request, slug):
     farm = get_object_or_404(Farm, slug=slug)
     context = {
