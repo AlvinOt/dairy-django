@@ -1,0 +1,32 @@
+<!-- base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dairy Bora{% endblock %}</title>
+    <!-- Add your CSS and JavaScript links here -->
+</head>
+<body>
+    <header>
+        <h1>Dairy Bora</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about/">About</a></li>
+                <!-- Add more navigation links as needed -->
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Django Farm App. All rights reserved.</p>
+    </footer>
+</body>
+</html>

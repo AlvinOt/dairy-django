@@ -12,7 +12,6 @@ class FarmAdmin(admin.ModelAdmin):
     list_display = ('name', 'manager', 'location', 'status', 'verified', 'created', 'updated')
     list_filter = ('status', 'verified', 'created', 'updated')
     search_fields = ('name', 'location', 'manager__username')
-    prepopulated_fields = {'slug': ('name',)}
 
 @admin.register(Cow)
 class CowAdmin(admin.ModelAdmin):

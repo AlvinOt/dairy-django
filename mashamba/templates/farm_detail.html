@@ -1,0 +1,21 @@
+<!-- farm_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ farm.name }} - Dairy Bora {% endblock %}
+
+{% block content %}
+    <article>
+        <header>
+            <h2>{{ farm.name }}</h2>
+            <p><strong>Manager:</strong> {{ farm.manager }}</p>
+        </header>
+        <section>
+            {% if farm.slogan %}
+                <p><strong>Slogan:</strong> {{ farm.slogan }}</p>
+            {% endif %}
+            <p><strong>Description:</strong> {{ farm.description }}</p>
+            <!-- Add more farm details as needed -->
+        </section>
+    </article>
+{% endblock %}
