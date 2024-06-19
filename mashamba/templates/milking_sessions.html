@@ -25,4 +25,6 @@
     <p>No milking sessions found for this cow.</p>
   {% endif %}
 
+  <p><a href="{% url 'farm_detail' slug=farm.slug %}">Back to Farm</a></p>
+
 {% endblock %}

@@ -8,17 +8,21 @@
     <article>
         <header>
             <h2>{{ farm.name }}</h2>
-            <p><strong>Manager:</strong> {{ farm.manager }}</p>
-        </header>
-        <section>
-            {% if farm.slogan %}
+	     {% if farm.slogan %}
                 <p><strong>Slogan:</strong> {{ farm.slogan }}</p>
             {% endif %}
+            <p><strong>Manager:</strong> {{ farm.manager }}</p>
+	    <p><a href="{% url 'all_cows_milk' slug=farm.slug %}">Farm Milk Production</a></p>
+        </header>
+        <section>
 
-	    <!-- Link to view cows on the farm -->
-	    <p><a href="{% url 'cow_list' slug=farm.slug %}">View Cows</a></p>
-            
-	    <p><strong>Description:</strong> {{ farm.description }}</p>
+            <!-- Link to view cows on the farm -->
+            <p><a href="{% url 'cow_list' slug=farm.slug %}">View Cows</a></p>
+
+	    <!-- Go back to Dashboard link -->
+            <p><a href="{% url 'dashboard' %}">Go back to Dashboard</a></p>
+
+            <p><strong>Description:</strong> {{ farm.description }}</p>
             <!-- Add more farm details as needed -->
         </section>
     </article>

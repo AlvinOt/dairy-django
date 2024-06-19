@@ -1,5 +1,3 @@
-<!-- cow_list.html -->
-
 {% extends 'base.html' %}
 
 {% block title %}Cows on {{ farm.name }} - Django Farm App{% endblock %}
@@ -11,4 +9,7 @@
             <li><a href="{% url 'cow_detail' slug=farm.slug cow_id=cow.id %}">{{ cow.name_or_tag }}</a></li>
         {% endfor %}
     </ul>
+
+    <!-- Add dashboard link here -->
+    <p><a href="{% url 'dashboard' %}">Go back to Dashboard</a></p>
 {% endblock %}
