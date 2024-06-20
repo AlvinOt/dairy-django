@@ -1,22 +1,19 @@
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Cow, Farm, MilkingSession
-from collections import defaultdict
 from django.db.models import DateField
-from django.db.models.functions import Cast
 from .forms import FarmForm
 from django.contrib.auth.decorators import login_required
 
-
 def home_view(request):
-    return render(request, 'home.html')
+    return render(request, 'mashamba/dairyfarm/home.html')
 
 
 @login_required
 def dashboard_view(request):
     user = request.user
     farms = Farm.objects.filter(manager=user)
-    return render(request, 'dashboard.html', {'farms': farms})
+    return render(request, 'mashamba/dairyfarm/dashboard.html', {'farms': farms})
 
 
 @login_required
@@ -30,15 +27,22 @@ def register_farm_view(request):
             return redirect('farm_detail', slug=farm.slug)
     else:
         form = FarmForm()
-    return render(request, 'register_farm.html', {'form': form})
+    return render(request, 'mashamba/dairyfarm/register_farm.html', {'form': form})
 
-@login_required
+def farm_list_view(request):
+    farms = Farm.objects.all()
+    context = {
+            'farms': farms
+            }
+    return render(request,
+            'mashamba/dairyfarm/farm_list.html', context)
+
 def farm_detail_view(request, slug):
     farm = get_object_or_404(Farm, slug=slug)
     context = {
         'farm': farm,
     }
-    return render(request, 'farm_detail.html', context)
+    return render(request, 'mashamba/dairyfarm/farm_detail.html', context)
 
 
 def cow_list_view(request, slug):
@@ -48,7 +52,7 @@ def cow_list_view(request, slug):
         'farm': farm,
         'cows': cows,
     }
-    return render(request, 'cow_list.html', context)
+    return render(request, 'mashamba/cow_list.html', context)
 
 def cow_detail_view(request, slug, cow_id):
     farm = get_object_or_404(Farm, slug=slug)
@@ -60,7 +64,7 @@ def cow_detail_view(request, slug, cow_id):
         'cow': cow,
         'last_mass': last_mass
     }
-    return render(request, 'cow_detail.html', context)
+    return render(request, 'mashamba/cow_detail.html', context)
 
 def milking_sessions_view(request, slug, cow_id):
     farm = get_object_or_404(Farm, slug=slug)
@@ -73,7 +77,7 @@ def milking_sessions_view(request, slug, cow_id):
         'milking_sessions': milking_sessions,
     }
 
-    return render(request, 'milking_sessions.html', context)
+    return render(request, 'mashamba/milking_sessions.html', context)
 
 
 def all_cows_milk_view(request, slug):
@@ -84,4 +88,4 @@ def all_cows_milk_view(request, slug):
         'farm': farm,
         'milking_sessions': milking_sessions,
     }
-    return render(request, 'all_cows_milk.html', context)
+    return render(request, 'mashamba/all_cows_milk.html', context)

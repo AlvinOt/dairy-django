@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Cows on {{ farm.name }} - Dairy Bora{% endblock %}
+
+{% block content %}
+    <h2>Cows on {{ farm.name }}</h2>
+    <ul>
+        {% for cow in cows %}
+            <li><a href="{% url 'mashamba:cow_detail' id=farm.id cow_id=cow.id %}">{{ cow.name_or_tag }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <!-- Add dashboard link here -->
+{% endblock %}

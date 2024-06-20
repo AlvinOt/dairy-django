@@ -1,0 +1,21 @@
+{% extends "mashamba/base.html" %}
+
+{% block title %}Dairy Bora{% endblock %}
+
+{% block content %}
+    <h1>Farm List</h1>
+    {% for farm in farms %}
+	<h2>
+	    <a href="{% url 'mashamba:farm_detail' farm.slug %}">
+		{{ farm.name }}
+	    </a>
+	</h2>
+	<p>
+	    Created {{ farm.created }} by {{ farm.manager }}
+	</p>
+	<p>Status: {{farm.status}}</p>
+	<p>Verification: {{farm.verified}}</p>
+	<p>Link: {{farm.slug}}</p>
+	{{ farm.description|truncatewords:30|linebreaks }}
+    {% endfor %}
+{% endblock %}

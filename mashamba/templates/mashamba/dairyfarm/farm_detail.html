@@ -1,6 +1,6 @@
 <!-- farm_detail.html -->
 
-{% extends 'base.html' %}
+{% extends 'mashamba/base.html' %}
 
 {% block title %}{{ farm.name }} - Dairy Bora {% endblock %}
 
@@ -12,15 +12,13 @@
                 <p><strong>Slogan:</strong> {{ farm.slogan }}</p>
             {% endif %}
             <p><strong>Manager:</strong> {{ farm.manager }}</p>
-	    <p><a href="{% url 'all_cows_milk' slug=farm.slug %}">Farm Milk Production</a></p>
         </header>
         <section>
 
             <!-- Link to view cows on the farm -->
-            <p><a href="{% url 'cow_list' slug=farm.slug %}">View Cows</a></p>
 
 	    <!-- Go back to Dashboard link -->
-            <p><a href="{% url 'dashboard' %}">Go back to Dashboard</a></p>
+	    <p>Located: {{farm.location}}</p>
 
             <p><strong>Description:</strong> {{ farm.description }}</p>
             <!-- Add more farm details as needed -->
