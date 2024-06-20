@@ -1,30 +1,29 @@
-{% extends "base.html" %}
+{% extends 'mashamba/base.html' %}
 
 {% block content %}
-  <h1>Milking Sessions for {{ cow.name_or_tag }}</h1>
-  <p>Farm: {{ farm.name }}</p>
+<div class="container">
+    <h2>Milking Sessions for {{ cow.name_or_tag }}</h2>
+    <a href="{% url 'mashamba:cow_detail' slug=farm.slug cow_id=cow.id %}">Back to {{ cow.name_or_tag }} Details</a>
 
-  {% if milking_sessions %}
-    <table>
-      <thead>
-        <tr>
-          <th>Milk Yield (L)</th>
-          <th>Milking Time</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for session in milking_sessions %}
-          <tr>
-            <td>{{ session.milk_yield }}</td>
-            <td>{{ session.milking_time }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No milking sessions found for this cow.</p>
-  {% endif %}
-
-  <p><a href="{% url 'farm_detail' slug=farm.slug %}">Back to Farm</a></p>
-
+    {% if milking_sessions %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Milk Yield (L)</th>
+                    <th>Milking Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in milking_sessions %}
+                    <tr>
+                        <td>{{ session.milk_yield }}</td>
+                        <td>{{ session.milking_time }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No milking sessions found for this cow.</p>
+    {% endif %}
+</div>
 {% endblock %}

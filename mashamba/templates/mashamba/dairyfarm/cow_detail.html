@@ -1,21 +1,56 @@
-{% extends "base.html" %}
+{% extends 'mashamba/base.html' %}
 
 {% block content %}
-  <h1>{{ cow.name_or_tag }}</h1>
-  <p>Breed: {{ cow.breed }}</p>
-  <p>Gender: {{ cow.gender }}</p>
-  <p>Date of Birth: {{ cow.date_of_birth }}</p>
-  <p>Age: {{ cow.age }}</p>
-
-  <!-- Add the link to milking sessions here -->
-  <p><a href="{% url 'milking_sessions' slug=farm.slug cow_id=cow.id %}">View Milking Sessions</a></p>
-
-   {% if last_mass %}
-        <h3>Last Mass Measurement:</h3>
-        <p><strong>Mass:</strong> {{ last_mass.mass }} kg</p>
-        <p><strong>Date Measured:</strong> {{ last_mass.date_measured }}</p>
-    {% endif %}
-
-    <p><a href="{% url 'farm_detail' slug=farm.slug %}">Back to Farm</a></p>
+<div class="container">
+    <h2>{{ cow.name_or_tag }} Details</h2>
+    <a href="{% url 'mashamba:cow_list' slug=farm.slug %}">Back to Cows List</a>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Farm</th>
+                        <td>{{ farm.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Name/Tag</th>
+                        <td>{{ cow.name_or_tag }}</td>
+                    </tr>
+                    <tr>
+                        <th>Breed</th>
+                        <td>{{ cow.breed }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date of Birth</th>
+                        <td>{{ cow.date_of_birth }}</td>
+                    </tr>
+                    <tr>
+                        <th>Gender</th>
+                        <td>{{ cow.get_gender_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>Age</th>
+                        <td>{{ cow.age }}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Recorded Mass</th>
+                        <td>
+                            {% if last_mass %}
+                                {{ last_mass.mass }} kg on {{ last_mass.date_measured }}
+                            {% else %}
+                                No mass recorded
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <a href="{% url 'mashamba:milking_sessions' slug=farm.slug cow_id=cow.id %}" class="btn btn-primary">View Milking Sessions</a>
+            <a href="{% url 'mashamba:all_cows_milk' slug=farm.slug %}" class="btn btn-secondary">View All Cows Milk Yields</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
-

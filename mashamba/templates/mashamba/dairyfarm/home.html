@@ -1,14 +1,12 @@
-{% extends "base.html" %}
-
-{% block title %}Welcome to Dairy Bora{% endblock %}
+{% extends 'mashamba/base.html' %}
 
 {% block content %}
-<div class="container">
-    <p>Hello World, Welcome to Dairy Bora</p>
-    <div class="buttons">
-        <a href="#" class="btn">Login</a>
-        <a href="#" class="btn">Sign Up</a>
-	<a href="{% url 'farm_register' %}" class="btn">Register a Farm</a>
-    </div>
+<div class="jumbotron text-center">
+    <h1 class="display-4">Welcome to Dairy Farm Management</h1>
+    <p class="lead">Manage your farms, cows, and more efficiently.</p>
+    <hr class="my-4">
+    <p>Get started by logging in or registering a new account.</p>
+    <a class="btn btn-primary btn-lg" href='#' role="button">Login</a>
+    <a class="btn btn-secondary btn-lg" href='#' role="button">Signup</a>
 </div>
 {% endblock %}

@@ -1,27 +1,10 @@
-<!-- farm_detail.html -->
-
 {% extends 'mashamba/base.html' %}
 
-{% block title %}{{ farm.name }} - Dairy Bora {% endblock %}
-
 {% block content %}
-    <article>
-        <header>
-            <h2>{{ farm.name }}</h2>
-	     {% if farm.slogan %}
-                <p><strong>Slogan:</strong> {{ farm.slogan }}</p>
-            {% endif %}
-            <p><strong>Manager:</strong> {{ farm.manager }}</p>
-        </header>
-        <section>
+<h2>{{ farm.name }}</h2>
+<p><strong>Slogan:</strong> {{ farm.slogan }}</p>
+<a href="{% url 'mashamba:cow_list' slug=farm.slug %}" class="btn btn-primary">View Cows</a>
 
-            <!-- Link to view cows on the farm -->
-
-	    <!-- Go back to Dashboard link -->
-	    <p>Located: {{farm.location}}</p>
-
-            <p><strong>Description:</strong> {{ farm.description }}</p>
-            <!-- Add more farm details as needed -->
-        </section>
-    </article>
+<p><strong>Description:</strong> {{ farm.description }}</p>
+<p><strong>Location:</strong> {{ farm.location }}</p>
 {% endblock %}

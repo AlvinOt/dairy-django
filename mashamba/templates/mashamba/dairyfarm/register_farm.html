@@ -1,15 +1,10 @@
-{% block title %}Register Farm{% endblock %}
+{% extends 'mashamba/base.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>Register a New Farm</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Register</button>
-    </form>
-</div>
-<div class="container">
-    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Go back to Dashboard</a>
-</div>
+<h2>Register a New Farm</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Register Farm</button>
+</form>
 {% endblock %}
