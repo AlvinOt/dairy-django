@@ -2,6 +2,7 @@
 
 {% block content %}
 <h2>{{ farm.name }}</h2>
+<a href="{% url 'mashamba:farm_list' %}">Back to Your Farms</a>
 <p><strong>Slogan:</strong> {{ farm.slogan }}</p>
 <a href="{% url 'mashamba:cow_list' slug=farm.slug %}" class="btn btn-primary">View Cows</a>
 

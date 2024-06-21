@@ -5,6 +5,11 @@ from django.db.models import DateField
 from .forms import FarmForm
 from django.contrib.auth.decorators import login_required
 
+
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
+
+
 def home_view(request):
     return render(request, 'mashamba/dairyfarm/index.html')
 
