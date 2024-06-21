@@ -101,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LOGIN_REDIRECT_URL = 'mashamba:dashboard'
+LOGIN_REDIRECT_URL = 'mashamba:farm_list'
 LOGOUT_REDIRECT_URL = 'mashamba:home'
 
 # Internationalization

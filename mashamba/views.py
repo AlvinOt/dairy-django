@@ -6,15 +6,16 @@ from .forms import FarmForm
 from django.contrib.auth.decorators import login_required
 
 def home_view(request):
-    return render(request, 'mashamba/dairyfarm/home.html')
+    return render(request, 'mashamba/dairyfarm/index.html')
 
 
+"""
 @login_required
 def dashboard_view(request):
     user = request.user
     farms = Farm.objects.filter(manager=user)
     return render(request, 'mashamba/dairyfarm/dashboard.html', {'farms': farms})
-
+"""
 
 @login_required
 def register_farm_view(request):
@@ -28,6 +29,18 @@ def register_farm_view(request):
     else:
         form = FarmForm()
     return render(request, 'mashamba/dairyfarm/register_farm.html', {'form': form})
+
+
+@login_required
+def all_farms_view(request):
+    user = request.user
+    user_farms = Farm.objects.filter(manager=user)
+    other_farms = Farm.objects.exclude(manager=user)
+    context = {
+        'user_farms': user_farms,
+        'other_farms': other_farms
+    }
+    return render(request, 'mashamba/dairyfarm/all_farms.html', context)
 
 
 @login_required

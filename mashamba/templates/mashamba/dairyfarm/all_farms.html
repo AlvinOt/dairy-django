@@ -1,12 +1,13 @@
 {% extends 'mashamba/base.html' %}
 
 {% block content %}
-<h2>Dashboard</h2>
+<h2>Farms</h2>
 <a href="{% url 'mashamba:farm_register' %}" class="btn btn-primary mb-3">Register a New Farm</a>
+
 <h3>Your Farms</h3>
-{% if farms %}
+{% if user_farms %}
     <ul class="list-group">
-        {% for farm in farms %}
+        {% for farm in user_farms %}
             <li class="list-group-item">
                 <a href="{% url 'mashamba:farm_detail' slug=farm.slug %}">{{ farm.name }}</a>
             </li>
@@ -14,5 +15,18 @@
     </ul>
 {% else %}
     <p>You do not manage any farms yet.</p>
+{% endif %}
+
+<h2>Other Farms</h2>
+{% if other_farms %}
+    <ul class="list-group">
+        {% for farm in other_farms %}
+            <li class="list-group-item">
+                <a href="{% url 'mashamba:farm_detail' slug=farm.slug %}">{{ farm.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No farms available.</p>
 {% endif %}
 {% endblock %}
