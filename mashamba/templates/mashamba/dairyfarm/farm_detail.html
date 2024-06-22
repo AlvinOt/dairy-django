@@ -1,11 +1,29 @@
 {% extends 'mashamba/base.html' %}
 
 {% block content %}
-<h2>{{ farm.name }}</h2>
-<a href="{% url 'mashamba:farm_list' %}">Back to Your Farms</a>
-<p><strong>Slogan:</strong> {{ farm.slogan }}</p>
-<a href="{% url 'mashamba:cow_list' slug=farm.slug %}" class="btn btn-primary">View Cows</a>
-
-<p><strong>Description:</strong> {{ farm.description }}</p>
-<p><strong>Location:</strong> {{ farm.location }}</p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h2 class="card-title">{{ farm.name }}</h2>
+                    <p class="card-text">{{ farm.slogan }}</p>
+                    {% if user.is_authenticated %}
+                        <div class="mb-3">
+                            <a href="{% url 'mashamba:farm_list' %}" class="btn btn-link">Back to Your Farms</a>
+                        </div>
+                        {% if farm.manager == user %}
+                            <div>
+                                <a href="{% url 'mashamba:cow_list' slug=farm.slug %}" class="btn btn-primary">View Cows</a>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    <hr>
+                    <p class="card-text"><strong>Description</strong><br>{{ farm.description }}</p>
+                    <p class="card-text"><strong>Location</strong><br>{{ farm.location }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -58,7 +58,6 @@ def farm_list_view(request):
     return render(request, 'mashamba/dairyfarm/farm_list.html', context)
 
 
-@login_required
 def farm_detail_view(request, slug):
     farm = get_object_or_404(Farm, slug=slug)
     context = {
