@@ -1,29 +1,21 @@
+<!-- mashamba/templates/mashamba/dairyfarm/cow_milk_records.html -->
+
 {% extends 'mashamba/base.html' %}
 
 {% block content %}
-<div class="container">
-    <h2>Milking Sessions for {{ cow.name_or_tag }}</h2>
-    <a href="{% url 'mashamba:cow_detail' slug=farm.slug cow_id=cow.id %}">Back to {{ cow.name_or_tag }} Details</a>
+  <h2 class="mt-4 mb-4">{{ cow.name_or_tag }} Milk Records</h2>
 
-    {% if milking_sessions %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Milk Yield (L)</th>
-                    <th>Milking Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for session in milking_sessions %}
-                    <tr>
-                        <td>{{ session.milk_yield }}</td>
-                        <td>{{ session.milking_time }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No milking sessions found for this cow.</p>
-    {% endif %}
-</div>
+  <table class="table table-bordered">
+    <tbody>
+      {% for date, sessions in sorted_grouped_milk_yield.items %}
+        <tr>
+          <td>{{ date }}</td>
+          {% for session in sessions %}
+            <td>{{ session.milk_yield }} L</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
+
