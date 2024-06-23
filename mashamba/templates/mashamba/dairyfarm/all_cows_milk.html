@@ -1,20 +1,25 @@
-<!-- mashamba/templates/mashamba/dairyfarm/all_cows_milk.html -->
-
 {% extends 'mashamba/base.html' %}
 
 {% block content %}
   <h2 class="mt-4 mb-4">Farm Milk Records</h2>
 
   <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Cow</th>
+        <th>Milk Yield (L)</th>
+      </tr>
+    </thead>
     <tbody>
-      {% for cow, dates in sorted_grouped_milk_yield.items %}
-        {% for date, sessions in dates.items %}
+      {% for date_data in sorted_grouped_milk_yield %}
+        {% for cow_data in date_data.cows %}
           <tr>
             {% if forloop.first %}
-              <td rowspan="{{ dates|length }}">{{ cow }}</td>
+              <td rowspan="{{ date_data.cows|length }}">{{ date_data.date }}</td>
             {% endif %}
-            <td>{{ date }}</td>
-            {% for session in sessions %}
+            <td>{{ cow_data.cow }}</td>
+            {% for session in cow_data.sessions %}
               <td>{{ session.milk_yield }} L</td>
             {% endfor %}
           </tr>

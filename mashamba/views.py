@@ -125,21 +125,28 @@ def all_cows_milk_view(request, slug):
     user = request.user
     farm = get_object_or_404(Farm, slug=slug, manager=user)  # Ensure user owns the farm
 
-    # Use Prefetch to optimize related data retrieval
-    milking_sessions = MilkingSession.objects.filter(cow__farm=farm).select_related('cow').order_by('-milking_time')
+    # Retrieve milking sessions for cows on the farm, ordered by milking time
+    milking_sessions = MilkingSession.objects.filter(cow__farm=farm).select_related('cow').order_by('milking_time')
 
-    # Group milking sessions by cow and then by date
+    # Group milking sessions by date first and then by cow
     grouped_milk_yield = defaultdict(lambda: defaultdict(list))
     for session in milking_sessions:
         date_str = session.milking_time.strftime("%Y-%m-%d")
-        grouped_milk_yield[session.cow.name_or_tag][date_str].append(session)
+        grouped_milk_yield[date_str][session.cow.name_or_tag].append(session)
 
-    # Sort dates within each cow's group
-    sorted_grouped_milk_yield = {cow: dict(sorted(sessions.items(), reverse=True)) for cow, sessions in grouped_milk_yield.items()}
+    # Sort dates in descending order
+    sorted_dates = sorted(grouped_milk_yield.keys(), reverse=True)
 
+    # Prepare a list of cows for each date in desired order
+    sorted_grouped_milk_yield = []
+    for date in sorted_dates:
+        cows_for_date = [{'cow': cow, 'sessions': grouped_milk_yield[date][cow]} for cow in grouped_milk_yield[date]]
+        sorted_grouped_milk_yield.append({'date': date, 'cows': cows_for_date})
+
+    # Prepare context to pass data to the template
     context = {
         'farm': farm,
-        'milking_sessions': milking_sessions,
         'sorted_grouped_milk_yield': sorted_grouped_milk_yield,
     }
+
     return render(request, 'mashamba/dairyfarm/all_cows_milk.html', context)
