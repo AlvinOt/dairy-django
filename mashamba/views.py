@@ -102,7 +102,7 @@ def milking_sessions_view(request, slug, cow_id):
     farm = get_object_or_404(Farm, slug=slug, manager=user)  # Ensure user owns the farm
     cow = get_object_or_404(Cow, id=cow_id, farm=farm)
 
-    milking_sessions = MilkingSession.objects.filter(cow=cow).order_by('-milking_time')
+    milking_sessions = MilkingSession.objects.filter(cow=cow).order_by('milking_time')
     grouped_milk_yield = {}
 
     for session in milking_sessions:
