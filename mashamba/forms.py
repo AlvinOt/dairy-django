@@ -5,7 +5,7 @@ from .models import Farm, MilkingSession, BreedingRecord, CalvingRecord
 class FarmForm(forms.ModelForm):
     class Meta:
         model = Farm
-        fields = ['name', 'location', 'description', 'slogan']
+        fields = ['name', 'location', 'slogan', 'description']
 
 class MilkingSessionForm(forms.ModelForm):
     class Meta:
