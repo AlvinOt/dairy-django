@@ -6,16 +6,29 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body text-center">
-                    <h2 class="card-title">{{ farm.name }}</h2>
+                    <h2 class="card-title">{{ farm.name }}
+		    {% if farm.verified %}
+                            <i class="fas fa-check-circle text-success small-checkmark"></i>
+                        {% endif %}
+		    </h2>
                     <p class="card-text">{{ farm.slogan }}</p>
                     {% if user.is_authenticated %}
                         <div class="mb-3">
                             <a href="{% url 'mashamba:farm_list' %}" class="btn btn-link">Back to Your Farms</a>
                         </div>
                         {% if farm.manager == user %}
-                            <div>
-                                <a href="{% url 'mashamba:cow_list' slug=farm.slug %}" class="btn btn-primary">View Cows</a>
-                            </div>
+                            {% if farm.active %}
+                                <div>
+                                    <a href="{% url 'mashamba:cow_list' slug=farm.slug %}" class="btn btn-primary">View Cows</a>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-warning" role="alert">
+                                    Inactive. Pay to activate or check after a few hours if you have already paid.
+                                </div>
+                                <div>
+                                    <a href="{% url 'mashamba:pay_to_activate' slug=farm.slug %}" class="btn btn-primary">Pay to Activate</a>
+                                </div>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                     <hr>
@@ -27,3 +40,4 @@
     </div>
 </div>
 {% endblock %}
+

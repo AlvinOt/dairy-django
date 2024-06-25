@@ -7,11 +7,6 @@ from datetime import date  #std lib
 
 # Farm Model
 class Farm(models.Model):
-    STATUS_CHOICES = [
-        ('ACT', 'Active'),
-        ('INA', 'Inactive')
-    ]
-
     name = models.CharField(max_length=100, unique=True)
     manager = models.ForeignKey(User, on_delete=models.CASCADE, related_name='farms_managed')
     slug = models.SlugField(max_length=100, unique=True, blank=True)
@@ -20,7 +15,7 @@ class Farm(models.Model):
     slogan = models.CharField(max_length=255, blank=True, null=True, help_text='Farm motto')
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='INA')
+    active = models.BooleanField(default=False)
     verified = models.BooleanField(default=False)  # This represents the verification status
 
     def save(self, *args, **kwargs):
@@ -46,7 +41,8 @@ class Cow(models.Model):
     ]
 
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
-    name_or_tag = models.CharField(max_length=100, unique=True)
+    name_or_tag = models.CharField(max_length=100)
+    identifier = models.CharField(max_length=100, unique=True, editable=False)
     breed = models.CharField(max_length=100, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
@@ -61,6 +57,12 @@ class Cow(models.Model):
             months = (delta.days % 365) // 30
             return f"{years} years, {months} months"
         return None
+
+
+    def save(self, *args, **kwargs):
+        if not self.identifier:
+            self.identifier = f'Cow-{self.pk}'  # Example: Cow-1, Cow-2, etc.
+        super().save(*args, **kwargs)
 
 
     def __str__(self):

@@ -9,8 +9,8 @@ from .forms import MilkingSessionForm, BreedingRecordForm, CalvingRecordForm  # 
 
 @admin.register(Farm)
 class FarmAdmin(admin.ModelAdmin):
-    list_display = ('name', 'manager', 'location', 'status', 'verified', 'created', 'updated')
-    list_filter = ('status', 'verified', 'created', 'updated')
+    list_display = ('name', 'manager', 'location', 'active', 'verified', 'created', 'updated')
+    list_filter = ('active', 'verified', 'created', 'updated')
     search_fields = ('name', 'location', 'manager__username')
 
 @admin.register(Cow)

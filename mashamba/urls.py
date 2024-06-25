@@ -13,6 +13,7 @@ urlpatterns = [
     #path('<slug:slug>/dashboard/', views.dashboard_view, name='dashboard'),
     path('register-farm/', views.register_farm_view, name='farm_register'),
     path('user_farms/', views.farm_list_view, name='farm_list'),
+    path('<slug:slug>/pay-to-activate/', views.pay_to_activate_view, name='pay_to_activate'),
     path('<slug:slug>/', views.farm_detail_view, name='farm_detail'),
     path('<slug:slug>/cows/', views.cow_list_view, name='cow_list'),
     path('<slug:slug>/cows/<int:cow_id>/', views.cow_detail_view, name='cow_detail'),

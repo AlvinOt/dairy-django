@@ -32,11 +32,23 @@ def register_farm_view(request):
         if form.is_valid():
             farm = form.save(commit=False)
             farm.manager = request.user
+            farm.active = False  # Ensure the farm is inactive initially
             farm.save()
-            return redirect('mashamba:farm_detail', slug=farm.slug)
+            return redirect('mashamba:pay_to_activate', slug=farm.slug)
     else:
         form = FarmForm()
     return render(request, 'mashamba/dairyfarm/register_farm.html', {'form': form})
+
+@login_required
+def pay_to_activate_view(request, slug):
+    farm = get_object_or_404(Farm, slug=slug)
+    context = {
+        'farm': farm,
+        'payment_amount': 600,
+        'payment_number': '0704644959',
+        'payment_name': 'Alvin Otieno',
+    }
+    return render(request, 'mashamba/dairyfarm/pay_to_activate.html', context)
 
 
 @login_required
