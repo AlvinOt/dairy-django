@@ -2,7 +2,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Cow, Farm, MilkingSession
 from django.db.models import DateField
-from .forms import FarmForm
+from .forms import FarmSubscriptionForm
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 from django.db.models import Prefetch
@@ -26,18 +26,19 @@ def dashboard_view(request):
 """
 
 @login_required
-def register_farm_view(request):
+def subscribe_farm(request):
     if request.method == 'POST':
-        form = FarmForm(request.POST)
+        form = FarmSubscriptionForm(request.POST)
         if form.is_valid():
             farm = form.save(commit=False)
             farm.manager = request.user
-            farm.active = False  # Ensure the farm is inactive initially
+            farm.active = False
             farm.save()
             return redirect('mashamba:pay_to_activate', slug=farm.slug)
     else:
-        form = FarmForm()
-    return render(request, 'mashamba/dairyfarm/register_farm.html', {'form': form})
+        form = FarmSubscriptionForm()
+    return render(request, 'mashamba/dairyfarm/farm_subscription.html', {'form': form})
+
 
 @login_required
 def pay_to_activate_view(request, slug):
@@ -45,8 +46,8 @@ def pay_to_activate_view(request, slug):
     context = {
         'farm': farm,
         'payment_amount': 600,
-        'payment_number': '0704644959',
-        'payment_name': 'Alvin Otieno',
+        'payment_number': '4522546',
+        'payment_name': 'Alvin',
     }
     return render(request, 'mashamba/dairyfarm/pay_to_activate.html', context)
 
@@ -75,9 +76,17 @@ def farm_list_view(request):
 
 def farm_detail_view(request, slug):
     farm = get_object_or_404(Farm, slug=slug)
+
+    # Retrieve products_services related to the farm
+    products_services = farm.products_services.all()
+
     context = {
         'farm': farm,
+        'products_services': products_services,
+        'email': farm.email,
+        'phone_number': farm.phone_number,
     }
+
     return render(request, 'mashamba/dairyfarm/farm_detail.html', context)
 
 @login_required

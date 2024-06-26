@@ -7,15 +7,31 @@
             <div class="card">
                 <div class="card-body text-center">
                     <h2 class="card-title">{{ farm.name }}
-		    {% if farm.verified %}
+                    {% if farm.verified %}
                             <i class="fas fa-check-circle text-success small-checkmark"></i>
                         {% endif %}
-		    </h2>
+                    </h2>
                     <p class="card-text">{{ farm.slogan }}</p>
-                    {% if user.is_authenticated %}
+
+                    <!-- Display products_services -->
+                    {% if products_services %}
                         <div class="mb-3">
-                            <a href="{% url 'mashamba:farm_list' %}" class="btn btn-link">Back to Your Farms</a>
+                            <h4>Products and Services</h4>
+                            <ul>
+                                {% for ps in products_services %}
+                                    <li>{{ ps.name }} - {{ ps.price }}</li>
+                                {% endfor %}
+                            </ul>
                         </div>
+                    {% endif %}
+
+                    <hr>
+                    <p class="card-text"><strong>Description</strong><br>{{ farm.description }}</p>
+                    <p class="card-text"><strong>Location</strong><br>{{ farm.location }}</p>
+
+                    <!-- Actions for authenticated users -->
+                    {% if user.is_authenticated %}
+		    <!--See something thatunauthenticated users won't -->
                         {% if farm.manager == user %}
                             {% if farm.active %}
                                 <div>
@@ -31,13 +47,16 @@
                             {% endif %}
                         {% endif %}
                     {% endif %}
-                    <hr>
-                    <p class="card-text"><strong>Description</strong><br>{{ farm.description }}</p>
-                    <p class="card-text"><strong>Location</strong><br>{{ farm.location }}</p>
+		    <!-- Display email and phone_number -->
+                    {% if email %}
+                        <p><strong>Email:</strong> {{ email }}</p>
+                    {% endif %}
+                    {% if phone_number %}
+                        <p><strong>Phone Number:</strong> {{ phone_number }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
-

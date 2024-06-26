@@ -1,8 +1,6 @@
 {% extends 'mashamba/base.html' %}
 
 {% block content %}
-<h2>Farms</h2>
-<a href="{% url 'mashamba:farm_register' %}" class="btn btn-primary mb-3">Register a New Farm</a>
 <h3>Your Farms</h3>
 {% if farms %}
     <ul class="list-group">
@@ -15,4 +13,5 @@
 {% else %}
     <p>You do not manage any farms yet.</p>
 {% endif %}
+<a href="{% url 'mashamba:farm_subscribe' %}" class="btn btn-primary mb-3">Subscribe a New Farm</a>
 {% endblock %}

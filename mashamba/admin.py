@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Farm, Cow, CowMass, MilkingSession, HealthRecord,
-    BreedingRecord, CalvingRecord, Inventory, Expense, Revenue
+    BreedingRecord, CalvingRecord, Inventory, Expense, Revenue, ProductService
 )
 from .forms import MilkingSessionForm, BreedingRecordForm, CalvingRecordForm  # Import your custom forms here
 
@@ -12,6 +12,14 @@ class FarmAdmin(admin.ModelAdmin):
     list_display = ('name', 'manager', 'location', 'active', 'verified', 'created', 'updated')
     list_filter = ('active', 'verified', 'created', 'updated')
     search_fields = ('name', 'location', 'manager__username')
+
+
+@admin.register(ProductService)
+class ProductServiceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'farm', 'price')  # Fields to display in the admin list view
+    list_filter = ('farm',)  # Filter options in the admin
+    search_fields = ('name', 'farm__name')
+
 
 @admin.register(Cow)
 class CowAdmin(admin.ModelAdmin):

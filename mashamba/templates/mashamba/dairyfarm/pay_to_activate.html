@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-body text-center">
                     <h2 class="card-title">Activate {{ farm.name }}</h2>
-                    <p class="card-text">To activate your farm, please pay Ksh 600 to Mpesa number <strong>{{ payment_number }}</strong> ({{ payment_name }}).</p>
+		    <p class="card-text">To activate your farm, please pay <strong>Ksh {{ payment_amount }}</strong> to Mpesa Till number <strong>{{ payment_number }}</strong> ({{ payment_name }}).</p>
                     <p class="card-text">Once payment is confirmed, your farm will be activated.</p>
                     <form id="activation-form" action="{% url 'mashamba:farm_detail' slug=farm.slug %}" method="get">
                         <div class="form-check mt-3">

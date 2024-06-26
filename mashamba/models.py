@@ -12,7 +12,9 @@ class Farm(models.Model):
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     location = models.CharField(max_length=100)
     description = models.TextField(max_length=255, blank=True)
-    slogan = models.CharField(max_length=255, blank=True, null=True, help_text='Farm motto')
+    slogan = models.CharField(max_length=255, blank=True, help_text='Farm motto')
+    email = models.EmailField(max_length=254, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=False)
@@ -33,6 +35,15 @@ class Farm(models.Model):
         return self.name
 
 
+
+class ProductService(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='products_services')
+    name = models.CharField(max_length=100)
+    price = models.CharField(max_length=100, blank=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.farm.name}"
+
 # Cow Model
 class Cow(models.Model):
     GENDER_CHOICES = [
@@ -42,7 +53,7 @@ class Cow(models.Model):
 
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
     name_or_tag = models.CharField(max_length=100)
-    identifier = models.CharField(max_length=100, unique=True, editable=False)
+    identifier = models.CharField(max_length=100, unique=True, blank=True)
     breed = models.CharField(max_length=100, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
@@ -61,6 +72,7 @@ class Cow(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.identifier:
+            super().save(*args, **kwargs)  # Save the instance to generate a pk
             self.identifier = f'Cow-{self.pk}'  # Example: Cow-1, Cow-2, etc.
         super().save(*args, **kwargs)
 

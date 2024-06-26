@@ -1,11 +1,12 @@
 from django import forms
-from .models import Farm, MilkingSession, BreedingRecord, CalvingRecord
+from .models import Farm, MilkingSession, BreedingRecord, CalvingRecord, ProductService
 
 
-class FarmForm(forms.ModelForm):
+class FarmSubscriptionForm(forms.ModelForm):
     class Meta:
         model = Farm
-        fields = ['name', 'location', 'slogan', 'description']
+        fields = ['name', 'location', 'slogan', 'description', 'phone_number', 'email']
+
 
 class MilkingSessionForm(forms.ModelForm):
     class Meta:
