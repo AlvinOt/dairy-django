@@ -1,9 +1,12 @@
+<!-- mashamba/templates/mashamba/dairyfarm/cow_list.html -->
 {% extends 'mashamba/base.html' %}
 
+{% block title %}Cows of {{ farm.name }} - Dairy Farm Bora{% endblock %}
+
 {% block content %}
-<div class="container">
+<div class="container mt-4">
     <h2>Cows of {{ farm.name }}</h2>
-    <a href="{% url 'mashamba:farm_detail' slug=farm.slug %}">Back to {{ farm.name }}</a>
+    <a href="{% url 'mashamba:farm_detail' slug=farm.slug %}" class="btn btn-primary mb-3">Back to {{ farm.name }}</a>
 
     {% if cows %}
         <table class="table table-striped">
@@ -27,18 +30,21 @@
                         <td>{{ cow.get_gender_display }}</td>
                         <td>{{ cow.age }}</td>
                         <td>
-                            <a href="{% url 'mashamba:cow_detail' slug=farm.slug cow_id=cow.id %}">View Details</a>
+                            <a href="{% url 'mashamba:cow_detail' slug=farm.slug cow_id=cow.id %}" class="btn btn-sm btn-primary">View Details</a>
                         </td>
                         <td>
-                            <a href="{% url 'mashamba:milking_sessions' slug=farm.slug cow_id=cow.id %}">View Milking Sessions</a>
+                            <a href="{% url 'mashamba:milking_sessions' slug=farm.slug cow_id=cow.id %}" class="btn btn-sm btn-secondary">View Milking Sessions</a>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        <!-- Include pagination template -->
+        {% include 'pagination.html' with page=cows %}
+
     {% else %}
         <p>No cows found for this farm.</p>
     {% endif %}
 </div>
 {% endblock %}
-

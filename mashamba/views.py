@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 from django.db.models import Prefetch
 from django.http import HttpResponseForbidden
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
@@ -92,15 +92,25 @@ def farm_detail_view(request, slug):
 @login_required
 def cow_list_view(request, slug):
     user = request.user
-    farm = get_object_or_404(Farm, slug=slug, manager=user)  # Ensure user owns the farm
+    farm = get_object_or_404(Farm, slug=slug, manager=user)
     cows = Cow.objects.filter(farm=farm)
-    
+
+    # Pagination
+    paginator = Paginator(cows, 7)  # Show 10 cows per page
+    page = request.GET.get('page')
+
+    try:
+        cows_paginated = paginator.page(page)
+    except PageNotAnInteger:
+        cows_paginated = paginator.page(1)
+    except EmptyPage:
+        cows_paginated = paginator.page(paginator.num_pages)
+
     context = {
         'farm': farm,
-        'cows': cows,
+        'cows': cows_paginated,  # Pass paginated cows to the template
     }
     return render(request, 'mashamba/dairyfarm/cow_list.html', context)
-
 
 @login_required
 def cow_detail_view(request, slug, cow_id):
@@ -138,6 +148,8 @@ def milking_sessions_view(request, slug, cow_id):
         'cow': cow,
         'sorted_grouped_milk_yield': sorted_grouped_milk_yield,
         }
+    paginator = Paginator(all_cows_milk_view, 3)
+    page_number = request.GET.get('page', 1)
     return render(request, 'mashamba/dairyfarm/milking_sessions.html', context)
 
 
