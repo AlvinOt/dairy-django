@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
-
+from django.urls import reverse
 from datetime import date  #std lib
 
 # Farm Model
@@ -24,6 +24,11 @@ class Farm(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+
+    def get_absolute_url(self):
+        return reverse('mashamba:farm_detail', kwargs={'slug': self.slug})
+
 
     class Meta:
         ordering = ['-created']

@@ -6,7 +6,7 @@
     <ul class="list-group">
         {% for farm in farms %}
             <li class="list-group-item">
-                <a href="{% url 'mashamba:farm_detail' slug=farm.slug %}">{{ farm.name }}</a>
+		    <a href="{{ farm.get_absolute_url }}">{{ farm.name }}</a>
             </li>
         {% endfor %}
     </ul>
