@@ -18,7 +18,8 @@ class CowForm(forms.ModelForm):
 class MilkingSessionForm(forms.ModelForm):
     class Meta:
         model = MilkingSession
-        fields = '__all__'
+        fields = ['milk_yield', 'milking_time']
+
 
     def clean_cow(self):
         cow = self.cleaned_data.get('cow')

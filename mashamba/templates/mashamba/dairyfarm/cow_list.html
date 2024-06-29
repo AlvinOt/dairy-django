@@ -13,10 +13,7 @@
             <thead>
                 <tr>
                     <th>Name/Tag</th>
-                    <th>Breed</th>
-                    <th>Date of Birth</th>
                     <th>Gender</th>
-                    <th>Age</th>
                     <th>Details</th>
                     <th>Milking Sessions</th>
                 </tr>
@@ -25,10 +22,7 @@
                 {% for cow in cows %}
                     <tr>
                         <td>{{ cow.name_or_tag }}</td>
-                        <td>{{ cow.breed }}</td>
-                        <td>{{ cow.date_of_birth }}</td>
                         <td>{{ cow.get_gender_display }}</td>
-                        <td>{{ cow.age }}</td>
                         <td>
                             <a href="{% url 'mashamba:cow_detail' slug=farm.slug cow_id=cow.id %}" class="btn btn-sm btn-primary">View Details</a>
                         </td>
