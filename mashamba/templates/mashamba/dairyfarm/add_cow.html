@@ -1,0 +1,11 @@
+<!-- add_cow.html -->
+
+{% extends 'mashamba/base.html' %}
+{% block content %}
+  <h2>Add a New Cow</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Cow</button>
+  </form>
+{% endblock %}

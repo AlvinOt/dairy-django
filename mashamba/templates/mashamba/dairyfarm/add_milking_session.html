@@ -1,0 +1,12 @@
+<!-- add_milking_session.html -->
+
+{% extends 'mashamba/base.html' %}
+{% block content %}
+  <h2>Record Milking Session for {{ cow.name_or_tag }}</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Record Milking</button>
+  </form>
+{% endblock %}
+

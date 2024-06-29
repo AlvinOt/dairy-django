@@ -1,11 +1,18 @@
 from django import forms
-from .models import Farm, MilkingSession, BreedingRecord, CalvingRecord, ProductService
+from .models import Farm, Cow, MilkingSession, BreedingRecord, CalvingRecord, ProductService
 
 
 class FarmSubscriptionForm(forms.ModelForm):
     class Meta:
         model = Farm
         fields = ['name', 'location', 'slogan', 'description', 'phone_number', 'email']
+
+
+
+class CowForm(forms.ModelForm):
+    class Meta:
+        model = Cow
+        fields = ['name_or_tag', 'breed', 'date_of_birth', 'gender']
 
 
 class MilkingSessionForm(forms.ModelForm):

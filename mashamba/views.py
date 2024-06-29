@@ -2,12 +2,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Cow, Farm, MilkingSession
 from django.db.models import DateField
-from .forms import FarmSubscriptionForm
+from .forms import FarmSubscriptionForm, CowForm, MilkingSessionForm
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 from django.db.models import Prefetch
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils import timezone
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
@@ -16,14 +17,6 @@ def custom_404(request, exception):
 def home_view(request):
     return render(request, 'mashamba/dairyfarm/index.html')
 
-
-"""
-@login_required
-def dashboard_view(request):
-    user = request.user
-    farms = Farm.objects.filter(manager=user)
-    return render(request, 'mashamba/dairyfarm/dashboard.html', {'farms': farms})
-"""
 
 @login_required
 def subscribe_farm(request):
@@ -89,6 +82,28 @@ def farm_detail_view(request, slug):
 
     return render(request, 'mashamba/dairyfarm/farm_detail.html', context)
 
+
+@login_required
+def add_cow_view(request, slug):
+    farm = get_object_or_404(Farm, slug=slug, manager=request.user)
+
+    if request.method == 'POST':
+        form = CowForm(request.POST)
+        if form.is_valid():
+            cow = form.save(commit=False)
+            cow.farm = farm  # Ensure farm is assigned before saving
+            cow.save()
+            return redirect('mashamba:cow_list', slug=farm.slug)
+    else:
+        form = CowForm()
+
+    context = {
+        'form': form,
+        'farm': farm,
+    }
+    return render(request, 'mashamba/dairyfarm/add_cow.html', context)
+
+
 @login_required
 def cow_list_view(request, slug):
     user = request.user
@@ -127,6 +142,31 @@ def cow_detail_view(request, slug, cow_id):
     return render(request, 'mashamba/dairyfarm/cow_detail.html', context)
 
 
+
+@login_required
+def add_milking_session_view(request, slug, cow_id):
+    farm = get_object_or_404(Farm, slug=slug, manager=request.user)
+    cow = get_object_or_404(Cow, id=cow_id, farm=farm)
+
+    if request.method == 'POST':
+        form = MilkingSessionForm(request.POST)
+        if form.is_valid():
+            milking_session = form.save(commit=False)
+            milking_session.cow = cow
+            milking_session.milking_time = timezone.now()  # Automatically set the milking time
+            milking_session.save()
+            return redirect('mashamba:milking_sessions', slug=farm.slug, cow_id=cow.id)
+    else:
+        form = MilkingSessionForm()
+
+    context = {
+        'form': form,
+        'farm': farm,
+        'cow': cow,
+    }
+    return render(request, 'mashamba/dairyfarm/add_milking_session.html', context)
+
+
 @login_required
 def milking_sessions_view(request, slug, cow_id):
     user = request.user
@@ -148,8 +188,6 @@ def milking_sessions_view(request, slug, cow_id):
         'cow': cow,
         'sorted_grouped_milk_yield': sorted_grouped_milk_yield,
         }
-    paginator = Paginator(all_cows_milk_view, 3)
-    page_number = request.GET.get('page', 1)
     return render(request, 'mashamba/dairyfarm/milking_sessions.html', context)
 
 
