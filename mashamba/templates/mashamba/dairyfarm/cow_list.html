@@ -1,4 +1,3 @@
-<!-- mashamba/templates/mashamba/dairyfarm/cow_list.html -->
 {% extends 'mashamba/base.html' %}
 
 {% block title %}Cows of {{ farm.name }} - Dairy Farm Bora{% endblock %}
@@ -6,7 +5,7 @@
 {% block content %}
 <div class="container mt-4">
     <h2>Cows of {{ farm.name }}</h2>
-    <a href="{% url 'mashamba:farm_detail' slug=farm.slug %}" class="btn btn-primary mb-3">Back to {{ farm.name }}</a>
+    <a href="{% url 'mashamba:add_cow' slug=farm.slug %}" class="btn btn-success mb-3">Add Cow</a> <!-- Add Cow button -->
 
     {% if cows %}
         <table class="table table-striped">
@@ -42,3 +41,4 @@
     {% endif %}
 </div>
 {% endblock %}
+

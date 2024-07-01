@@ -3,17 +3,26 @@
 {% block content %}
   <h2 class="mt-4 mb-4">{{ cow.name_or_tag }} Milk Records</h2>
 
-  <table class="table table-bordered">
-    <tbody>
-      {% for date, sessions in sorted_grouped_milk_yield.items %}
-        <tr>
-          <td>{{ date }}</td>
-          {% for session in sessions %}
-            <td>{{ session.milk_yield }} L</td>
-          {% endfor %}
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- Add link to record milking session -->
+  <a href="{% url 'mashamba:add_milking_session' slug=cow.farm.slug cow_id=cow.id %}" class="btn btn-primary mb-3">Record Milking Session</a>
+
+  <!-- Display message if no milking sessions recorded -->
+  {% if sorted_grouped_milk_yield|length == 0 %}
+    <p>No milking sessions recorded yet.</p>
+  {% else %}
+    <table class="table table-bordered">
+      <tbody>
+        {% for date, sessions in sorted_grouped_milk_yield.items %}
+          <tr>
+            <td>{{ date }}</td>
+            {% for session in sessions %}
+              <td>{{ session.milk_yield }} L</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
 {% endblock %}
 
