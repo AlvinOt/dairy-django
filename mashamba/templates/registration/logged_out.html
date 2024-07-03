@@ -1,0 +1,23 @@
+{% extends "mashamba/base.html" %}
+{% load static %}
+
+{% block title %}Logged out{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card mt-5">
+            <div class="card-header">
+                <h1 class="card-title">Logged out</h1>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    You have been successfully logged out.
+                    You can <a href="{% url 'mashamba:login' %}">log-in again</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

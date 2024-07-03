@@ -1,0 +1,33 @@
+{% extends "mashamba/base.html" %}
+{% load static %}
+
+{% block title %}Log-in{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card mt-5">
+            <div class="card-header">
+                <h1 class="card-title">Log-in</h1>
+            </div>
+            <div class="card-body">
+                {% if form.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        Your username and password didn't match. Please try again.
+                    </div>
+                {% else %}
+                    <p class="card-text">Please, use the following form to log-in:</p>
+                {% endif %}
+                <div class="login-form">
+                    <form action="{% url 'mashamba:login' %}" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="next" value="{{ next }}" />
+                        <p><button type="submit" class="btn btn-primary">Log-in</button></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

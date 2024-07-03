@@ -22,14 +22,14 @@
                         <a class="nav-link" href="{% url 'mashamba:farm_list' %}">Farms</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href='#'>Logout</a>
+			    <a class="nav-link" href="{% url 'mashamba:logout' %}">Logout</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href='#'>Login</a>
+			    <a class="nav-link" href="{% url 'mashamba:login' %}">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href='#'>Sign Up</a>  <!-- Add this line -->
+                        <a class="nav-link" href="{% url 'mashamba:register' %}">Sign Up</a>  <!-- Add this line -->
                     </li>
                 {% endif %}
 		    <li class="nav-item">

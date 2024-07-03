@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from django.contrib.auth import views as auth_views
 
@@ -6,8 +6,10 @@ app_name = 'mashamba'
 
 urlpatterns = [
         
-    path('login/', auth_views.LoginView.as_view(template_name='mashamba/dairyfarm/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='mashamba:home'), name='logout'),
+    #path('login/', auth_views.LoginView.as_view(), name='login'),
+    #path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('register/', views.register, name='register'),
+    path('', include('django.contrib.auth.urls')),
     path('', views.home_view, name='home'),
     path('all_farms/', views.all_farms_view, name='all_farms'),
     #path('<slug:slug>/dashboard/', views.dashboard_view, name='dashboard'),
