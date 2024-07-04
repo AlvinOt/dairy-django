@@ -62,6 +62,8 @@ class Cow(models.Model):
     breed = models.CharField(max_length=100, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    mass = models.FloatField(blank=True, null=True)
+    updated = models.DateField(blank=True, default=date.today)
 
 
     @property
@@ -85,22 +87,6 @@ class Cow(models.Model):
     def __str__(self):
         return self.name_or_tag
 
-
-# CowMass Model
-class CowMass(models.Model):
-    cow = models.ForeignKey(Cow, on_delete=models.CASCADE, related_name='mass_measurements')
-    mass = models.FloatField(blank=True, null=True)
-    date_measured = models.DateField(blank=True, null=True, default=date.today)
-
-
-    def __str__(self):
-        return f"{self.cow} - {self.mass} kg on {self.date_measured}"
-
-
-    class Meta:
-        verbose_name_plural = 'cow masses'
-
-
 # MilkingSession Model
 class MilkingSession(models.Model):
     cow = models.ForeignKey(Cow, on_delete=models.CASCADE, related_name='milking_sessions')
@@ -108,7 +94,7 @@ class MilkingSession(models.Model):
     milking_time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.cow} - {self.milk_yield} L on {self.milking_time}"
+        return f"{self.cow} - {self.milk_yield} on {self.milking_time}"
 
 
 # HealthRecord Model

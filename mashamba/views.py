@@ -169,7 +169,8 @@ def add_milking_session_view(request, slug, cow_id):
         if form.is_valid():
             milking_session = form.save(commit=False)
             milking_session.cow = cow
-            milking_session.milking_time = timezone.now()  # Automatically set the milking time
+            # Assign milking_time from the form data
+            milking_session.milking_time = form.cleaned_data['milking_time']
             milking_session.save()
             return redirect('mashamba:milking_sessions', slug=farm.slug, cow_id=cow.id)
     else:
@@ -181,7 +182,6 @@ def add_milking_session_view(request, slug, cow_id):
         'cow': cow,
     }
     return render(request, 'mashamba/dairyfarm/add_milking_session.html', context)
-
 
 @login_required
 def milking_sessions_view(request, slug, cow_id):

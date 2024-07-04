@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Farm, Cow, CowMass, MilkingSession, HealthRecord,
+    Farm, Cow, MilkingSession, HealthRecord,
     BreedingRecord, CalvingRecord, Inventory, Expense, Revenue, ProductService
 )
 from .forms import MilkingSessionForm, BreedingRecordForm, CalvingRecordForm  # Import your custom forms here
@@ -27,10 +27,6 @@ class CowAdmin(admin.ModelAdmin):
     list_filter = ('gender', 'breed', 'farm')
     search_fields = ('name_or_tag', 'farm__name')
 
-@admin.register(CowMass)
-class CowMassAdmin(admin.ModelAdmin):
-    list_display = ('cow', 'mass', 'date_measured')
-    list_filter = ('date_measured',)
 
 @admin.register(MilkingSession)
 class MilkingSessionAdmin(admin.ModelAdmin):
