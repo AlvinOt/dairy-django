@@ -9,6 +9,7 @@
         <th>Date</th>
         <th>Cow</th>
         <th>Total Milk Yield (L)</th>
+        <th>Total Milk Yield for Day (L)</th> <!-- New column for daily totals -->
       </tr>
     </thead>
     <tbody>
@@ -19,10 +20,20 @@
               <td rowspan="{{ cows|length }}">{{ date }}</td>
             {% endif %}
             <td>{{ cow.cow }}</td>
-            <td>{{ cow.total_yield|floatformat:2 }} L</td> <!-- Limit to 2 decimal places -->
+            <td>{{ cow.total_yield|floatformat:2 }} L</td>
+            {% if forloop.first %}
+              <td rowspan="{{ cows|length }}">
+                {% for daily_date, total in sorted_daily_totals %}
+                  {% if daily_date == date %}
+                    {{ total|floatformat:2 }} L
+                  {% endif %}
+                {% endfor %}
+              </td>
+            {% endif %}
           </tr>
         {% endfor %}
       {% endfor %}
     </tbody>
   </table>
 {% endblock %}
+

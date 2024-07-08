@@ -254,20 +254,24 @@ def all_cows_milk_view(request, slug):
 
     # Group by date
     grouped_milk_yield = defaultdict(list)
+    daily_totals = defaultdict(float)
     for session in milking_sessions:
         date_str = session['milking_time__date'].strftime("%Y-%m-%d")
         grouped_milk_yield[date_str].append({
             'cow': session['cow__name_or_tag'],
             'total_yield': session['total_yield']
         })
+        daily_totals[date_str] += float(session['total_yield'])
 
     # Sort dates in descending order
     sorted_grouped_milk_yield = sorted(grouped_milk_yield.items(), reverse=True)
+    sorted_daily_totals = [(date, total) for date, total in sorted(daily_totals.items(), reverse=True)]
 
     # Prepare context to pass data to the template
     context = {
         'farm': farm,
         'sorted_grouped_milk_yield': sorted_grouped_milk_yield,
+        'sorted_daily_totals': sorted_daily_totals,
     }
 
     return render(request, 'mashamba/dairyfarm/all_cows_milk.html', context)
