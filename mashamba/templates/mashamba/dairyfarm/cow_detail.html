@@ -42,6 +42,11 @@
                             {% endif %}
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="2">
+                            <a href="{% url 'mashamba:update_cow' slug=farm.slug cow_id=cow.id %}" class="btn btn-info">Update Cow Details</a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -54,3 +59,4 @@
     </div>
 </div>
 {% endblock %}
+

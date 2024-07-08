@@ -159,6 +159,28 @@ def cow_detail_view(request, slug, cow_id):
     return render(request, 'mashamba/dairyfarm/cow_detail.html', context)
 
 
+@login_required
+def update_cow_view(request, slug, cow_id):
+    user = request.user
+    farm = get_object_or_404(Farm, slug=slug, manager=user)  # Ensure user owns the farm
+    cow = get_object_or_404(Cow, id=cow_id, farm=farm)
+
+    if request.method == 'POST':
+        form = CowForm(request.POST, instance=cow)
+        if form.is_valid():
+            form.save()
+            return redirect('mashamba:cow_detail', slug=farm.slug, cow_id=cow.id)
+    else:
+        form = CowForm(instance=cow)
+
+    context = {
+        'farm': farm,
+        'cow': cow,
+        'form': form,
+    }
+
+    return render(request, 'mashamba/dairyfarm/update_cow.html', context)
+
 
 @login_required
 def add_milking_session_view(request, slug, cow_id):

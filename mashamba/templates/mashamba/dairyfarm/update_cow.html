@@ -1,0 +1,11 @@
+{% extends 'mashamba/base.html' %}
+
+{% block content %}
+  <h2 class="mt-4 mb-4">Update Cow Details</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+  <a href="{% url 'mashamba:cow_detail' slug=farm.slug cow_id=cow.id %}" class="btn btn-secondary mt-3">Cancel</a>
+{% endblock %}
