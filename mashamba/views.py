@@ -148,12 +148,12 @@ def cow_detail_view(request, slug, cow_id):
     user = request.user
     farm = get_object_or_404(Farm, slug=slug, manager=user)  # Ensure user owns the farm
     cow = get_object_or_404(Cow, id=cow_id, farm=farm)
-    last_mass = cow.mass_measurements.order_by('-date_measured').first()
+    #last_mass = cow.mass_measurements.order_by('-date_measured').first()
 
     context = {
         'farm': farm,
         'cow': cow,
-        'last_mass': last_mass
+        #'last_mass': last_mass
     }
     return render(request, 'mashamba/dairyfarm/cow_detail.html', context)
 
@@ -183,6 +183,7 @@ def add_milking_session_view(request, slug, cow_id):
     }
     return render(request, 'mashamba/dairyfarm/add_milking_session.html', context)
 
+
 @login_required
 def milking_sessions_view(request, slug, cow_id):
     user = request.user
@@ -195,15 +196,16 @@ def milking_sessions_view(request, slug, cow_id):
     for session in milking_sessions:
         date = session.milking_time.date()
         if date not in grouped_milk_yield:
-            grouped_milk_yield[date] = []
-        grouped_milk_yield[date].append(session)
+            grouped_milk_yield[date] = {'sessions': [], 'total': 0}
+        grouped_milk_yield[date]['sessions'].append(session)
+        grouped_milk_yield[date]['total'] += session.milk_yield
 
     sorted_grouped_milk_yield = dict(sorted(grouped_milk_yield.items(), reverse=True))
 
     context = {
         'cow': cow,
         'sorted_grouped_milk_yield': sorted_grouped_milk_yield,
-        }
+    }
     return render(request, 'mashamba/dairyfarm/milking_sessions.html', context)
 
 
