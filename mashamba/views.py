@@ -1,7 +1,7 @@
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Cow, Farm, MilkingSession
-from django.db.models import DateField
+from django.db.models import DateField, Sum
 from .forms import UserRegistrationForm, FarmSubscriptionForm, CowForm, MilkingSessionForm
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
@@ -9,6 +9,7 @@ from django.db.models import Prefetch
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
+
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
@@ -214,23 +215,22 @@ def all_cows_milk_view(request, slug):
     user = request.user
     farm = get_object_or_404(Farm, slug=slug, manager=user)  # Ensure user owns the farm
 
-    # Retrieve milking sessions for cows on the farm, ordered by milking time
-    milking_sessions = MilkingSession.objects.filter(cow__farm=farm).select_related('cow').order_by('milking_time')
+    # Aggregate milking sessions by cow and date
+    milking_sessions = MilkingSession.objects.filter(cow__farm=farm).values(
+        'cow__name_or_tag', 'milking_time__date'
+    ).annotate(total_yield=Sum('milk_yield')).order_by('-milking_time__date', 'cow__name_or_tag')
 
-    # Group milking sessions by date first and then by cow
-    grouped_milk_yield = defaultdict(lambda: defaultdict(list))
+    # Group by date
+    grouped_milk_yield = defaultdict(list)
     for session in milking_sessions:
-        date_str = session.milking_time.strftime("%Y-%m-%d")
-        grouped_milk_yield[date_str][session.cow.name_or_tag].append(session)
+        date_str = session['milking_time__date'].strftime("%Y-%m-%d")
+        grouped_milk_yield[date_str].append({
+            'cow': session['cow__name_or_tag'],
+            'total_yield': session['total_yield']
+        })
 
     # Sort dates in descending order
-    sorted_dates = sorted(grouped_milk_yield.keys(), reverse=True)
-
-    # Prepare a list of cows for each date in desired order
-    sorted_grouped_milk_yield = []
-    for date in sorted_dates:
-        cows_for_date = [{'cow': cow, 'sessions': grouped_milk_yield[date][cow]} for cow in grouped_milk_yield[date]]
-        sorted_grouped_milk_yield.append({'date': date, 'cows': cows_for_date})
+    sorted_grouped_milk_yield = sorted(grouped_milk_yield.items(), reverse=True)
 
     # Prepare context to pass data to the template
     context = {

@@ -8,24 +8,21 @@
       <tr>
         <th>Date</th>
         <th>Cow</th>
-        <th>Milk Yield (L)</th>
+        <th>Total Milk Yield (L)</th>
       </tr>
     </thead>
     <tbody>
-      {% for date_data in sorted_grouped_milk_yield %}
-        {% for cow_data in date_data.cows %}
+      {% for date, cows in sorted_grouped_milk_yield %}
+        {% for cow in cows %}
           <tr>
             {% if forloop.first %}
-              <td rowspan="{{ date_data.cows|length }}">{{ date_data.date }}</td>
+              <td rowspan="{{ cows|length }}">{{ date }}</td>
             {% endif %}
-            <td>{{ cow_data.cow }}</td>
-            {% for session in cow_data.sessions %}
-              <td>{{ session.milk_yield }} L</td>
-            {% endfor %}
+            <td>{{ cow.cow }}</td>
+            <td>{{ cow.total_yield|floatformat:2 }} L</td> <!-- Limit to 2 decimal places -->
           </tr>
         {% endfor %}
       {% endfor %}
     </tbody>
   </table>
 {% endblock %}
-
