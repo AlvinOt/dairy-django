@@ -21,6 +21,7 @@ urlpatterns = [
     path('<slug:slug>/cows/add-cow/', views.add_cow_view, name='add_cow'),
     path('<slug:slug>/cows/<int:cow_id>/', views.cow_detail_view, name='cow_detail'),
     path('<slug:slug>/cows/<int:cow_id>/update/', views.update_cow_view, name='update_cow'),
+    path('farms/<slug:slug>/cows/<int:cow_id>/archive/', views.archive_cow_view, name='archive_cow'),
     path('<slug:slug>/cows/<int:cow_id>/milking-sessions/', views.milking_sessions_view, name='milking_sessions'),
     path('<slug:slug>/cows/<int:cow_id>/milking-sessions/add-milking-session/', views.add_milking_session_view, name='add_milking_session'),
     path('<slug:slug>/all_cows_milk/', views.all_cows_milk_view, name='all_cows_milk'),

@@ -64,6 +64,7 @@ class Cow(models.Model):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     mass = models.FloatField(blank=True, null=True)
     updated = models.DateField(blank=True, default=date.today)
+    is_active = models.BooleanField(default=True)
 
 
     @property

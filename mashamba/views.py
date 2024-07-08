@@ -125,7 +125,7 @@ def add_cow_view(request, slug):
 def cow_list_view(request, slug):
     user = request.user
     farm = get_object_or_404(Farm, slug=slug, manager=user)
-    cows = Cow.objects.filter(farm=farm)
+    cows = Cow.objects.filter(farm=farm, is_active=True)
 
     # Pagination
     paginator = Paginator(cows, 7)  # Show 10 cows per page
@@ -180,6 +180,16 @@ def update_cow_view(request, slug, cow_id):
     }
 
     return render(request, 'mashamba/dairyfarm/update_cow.html', context)
+
+
+@login_required
+def archive_cow_view(request, slug, cow_id):
+    user = request.user
+    farm = get_object_or_404(Farm, slug=slug, manager=user)
+    cow = get_object_or_404(Cow, id=cow_id, farm=farm)
+    cow.is_active = False  # Mark the cow as inactive
+    cow.save()
+    return redirect('mashamba:cow_list', slug=farm.slug)
 
 
 @login_required

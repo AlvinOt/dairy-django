@@ -29,7 +29,7 @@ class FarmSubscriptionForm(forms.ModelForm):
 class CowForm(forms.ModelForm):
     class Meta:
         model = Cow
-        fields = ['name_or_tag', 'breed', 'date_of_birth', 'gender']
+        fields = ['name_or_tag', 'breed', 'date_of_birth', 'gender', 'mass']
 
 
 class MilkingSessionForm(forms.ModelForm):

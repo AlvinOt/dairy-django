@@ -45,6 +45,7 @@
                     <tr>
                         <td colspan="2">
                             <a href="{% url 'mashamba:update_cow' slug=farm.slug cow_id=cow.id %}" class="btn btn-info">Update Cow Details</a>
+                            <a href="{% url 'mashamba:archive_cow' slug=farm.slug cow_id=cow.id %}" class="btn btn-warning" onclick="return confirm('Are you sure you want to archive this cow?');">Archive Cow</a>
                         </td>
                     </tr>
                 </tbody>
@@ -59,4 +60,3 @@
     </div>
 </div>
 {% endblock %}
-
