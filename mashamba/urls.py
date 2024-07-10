@@ -18,6 +18,7 @@ urlpatterns = [
     path('<slug:slug>/pay-to-activate/', views.pay_to_activate_view, name='pay_to_activate'),
     path('<slug:slug>/', views.farm_detail_view, name='farm_detail'),
     path('<slug:slug>/cows/', views.cow_list_view, name='cow_list'),
+    path('<slug:slug>/milk/', views.daily_milk_view, name='daily-milk'),
     path('<slug:slug>/cows/add-cow/', views.add_cow_view, name='add_cow'),
     path('<slug:slug>/cows/<int:cow_id>/', views.cow_detail_view, name='cow_detail'),
     path('<slug:slug>/cows/<int:cow_id>/update/', views.update_cow_view, name='update_cow'),

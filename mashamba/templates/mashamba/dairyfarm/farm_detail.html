@@ -31,11 +31,14 @@
 
                     <!-- Actions for authenticated users -->
                     {% if user.is_authenticated %}
-		    <!--See something thatunauthenticated users won't -->
+                    <!--See something that unauthenticated users won't -->
                         {% if farm.manager == user %}
                             {% if farm.active %}
-                                <div>
+                                <div class="mb-3">
                                     <a href="{% url 'mashamba:cow_list' slug=farm.slug %}" class="btn btn-primary">View Cows</a>
+                                </div>
+                                <div>
+                                    <a href="{% url 'mashamba:daily-milk' slug=farm.slug %}" class="btn btn-primary">View Milk Records</a>
                                 </div>
                             {% else %}
                                 <div class="alert alert-warning" role="alert">
@@ -47,7 +50,7 @@
                             {% endif %}
                         {% endif %}
                     {% endif %}
-		    <!-- Display email and phone_number -->
+                    <!-- Display email and phone_number -->
                     {% if email %}
                         <p><strong>Email:</strong> {{ email }}</p>
                     {% endif %}

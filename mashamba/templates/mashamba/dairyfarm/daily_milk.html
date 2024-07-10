@@ -1,0 +1,28 @@
+{% extends 'mashamba/base.html' %}
+
+{% block content %}
+  <h2 class="mt-4 mb-4">Farm Milk Records</h2>
+
+  {% if sorted_grouped_milk_yield %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Total Milk Yield for Day (L)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for date, total_yield in sorted_grouped_milk_yield %}
+          <tr>
+            <td>{{ date }}</td>
+            <td>{{ total_yield|floatformat:2 }} L</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-info" role="alert">
+      No milk records have been added yet.
+    </div>
+  {% endif %}
+{% endblock %}

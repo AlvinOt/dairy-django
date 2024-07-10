@@ -275,3 +275,32 @@ def all_cows_milk_view(request, slug):
     }
 
     return render(request, 'mashamba/dairyfarm/all_cows_milk.html', context)
+
+
+
+@login_required
+def daily_milk_view(request, slug):
+    user = request.user
+    farm = get_object_or_404(Farm, slug=slug, manager=user)  # Ensure user owns the farm
+
+    # Aggregate milking sessions by date
+    milking_sessions = MilkingSession.objects.filter(cow__farm=farm).values(
+        'milking_time__date'
+    ).annotate(total_yield=Sum('milk_yield')).order_by('-milking_time__date')
+
+    # Group by date
+    grouped_milk_yield = defaultdict(float)
+    for session in milking_sessions:
+        date_str = session['milking_time__date'].strftime("%Y-%m-%d")
+        grouped_milk_yield[date_str] += float(session['total_yield'])
+
+    # Sort dates in descending order
+    sorted_grouped_milk_yield = sorted(grouped_milk_yield.items(), reverse=True)
+
+    # Prepare context to pass data to the template
+    context = {
+        'farm': farm,
+        'sorted_grouped_milk_yield': sorted_grouped_milk_yield,
+    }
+
+    return render(request, 'mashamba/dairyfarm/daily_milk.html', context)
