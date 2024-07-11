@@ -98,6 +98,16 @@ class MilkingSession(models.Model):
         return f"{self.cow} - {self.milk_yield} on {self.milking_time}"
 
 
+
+class MilkSale(models.Model):
+    customer_name = models.CharField(max_length=255)
+    milk_amount = models.DecimalField(max_digits=6, decimal_places=2)
+    sale_time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.customer_name} bought {self.milk_amount} L on {self.sale_time}"
+
+
 # HealthRecord Model
 class HealthRecord(models.Model):
     cow = models.ForeignKey(Cow, on_delete=models.CASCADE)

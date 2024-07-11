@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Farm, Cow, MilkingSession, BreedingRecord, CalvingRecord, ProductService
+from .models import Farm, Cow, MilkingSession, BreedingRecord, CalvingRecord, ProductService, MilkSale
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -43,6 +43,16 @@ class MilkingSessionForm(forms.ModelForm):
         if cow.gender != 'Female':
             raise forms.ValidationError("Milking sessions can only be added for female cows.")
         return cow
+
+
+class MilkSaleForm(forms.ModelForm):
+    class Meta:
+        model = MilkSale
+        fields = ['customer_name', 'milk_amount', 'sale_time']
+        widgets = {
+            'sale_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
 
 class BreedingRecordForm(forms.ModelForm):
     class Meta:

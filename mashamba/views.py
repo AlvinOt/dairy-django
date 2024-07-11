@@ -1,14 +1,15 @@
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Cow, Farm, MilkingSession
-from django.db.models import DateField, Sum
-from .forms import UserRegistrationForm, FarmSubscriptionForm, CowForm, MilkingSessionForm
+from .models import Cow, Farm, MilkingSession, MilkSale
+from django.db.models import DateField, Sum, Prefetch
+from .forms import UserRegistrationForm, FarmSubscriptionForm, CowForm, MilkingSessionForm, MilkSaleForm
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
-from django.db.models import Prefetch
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
+from django.urls import reverse
+from decimal import Decimal
 
 
 def custom_404(request, exception):
@@ -125,7 +126,7 @@ def add_cow_view(request, slug):
 def cow_list_view(request, slug):
     user = request.user
     farm = get_object_or_404(Farm, slug=slug, manager=user)
-    cows = Cow.objects.filter(farm=farm, is_active=True)
+    cows = Cow.objects.order_by('id').filter(farm=farm, is_active=True)
 
     # Pagination
     paginator = Paginator(cows, 7)  # Show 10 cows per page
@@ -304,3 +305,47 @@ def daily_milk_view(request, slug):
     }
 
     return render(request, 'mashamba/dairyfarm/daily_milk.html', context)
+
+
+@login_required
+def milk_sales_entry_view(request, slug):
+    farm = get_object_or_404(Farm, slug=slug)
+    today = timezone.now().date()
+
+    if request.method == 'POST':
+        form = MilkSaleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('mashamba:milk_sales_entry', kwargs={'slug': slug}))
+    else:
+        form = MilkSaleForm()
+
+    milking_sessions = MilkingSession.objects.values('milking_time__date').annotate(total_milk=Sum('milk_yield')).order_by('-milking_time__date')
+    milk_sales = MilkSale.objects.values('sale_time__date', 'customer_name').annotate(milk_sold=Sum('milk_amount')).order_by('-sale_time__date')
+
+    sales_by_date = defaultdict(list)
+    for sale in milk_sales:
+        sales_by_date[sale['sale_time__date']].append(sale)
+
+    report_data = []
+    for session in milking_sessions:
+        date = session['milking_time__date']
+        total_milk = session['total_milk']
+        sold_milk = sum(sale['milk_sold'] for sale in sales_by_date[date])
+        remaining = total_milk - sold_milk
+        for sale in sorted(sales_by_date[date], key=lambda x: x['sale_time__date'], reverse=True):
+            report_data.append({
+                'date': date,
+                'total_milk': total_milk,
+                'customer_name': sale['customer_name'],
+                'milk_sold': sale['milk_sold'],
+                'remaining_milk': remaining,
+            })
+
+    context = {
+        'farm': farm,
+        'form': form,
+        'report_data': report_data,
+    }
+
+    return render(request, 'mashamba/dairyfarm/milk_sales_entry.html', context)
